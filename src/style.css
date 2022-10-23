@@ -155,22 +155,20 @@ main {
 
 #right-ships {
   justify-self: start;
-  margin-left: 15%;
 }
 
 #left-ships {
   justify-self: end;
-  margin-right: 15%;
 }
 
 #rotate-button {
   width: 75%;
   height: 25%;
-  background-image: url("rotate.png");
+  background: url("rotate.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
-  background: none;
+  filter: drop-shadow(0px 0px 15px black);
   border: none;
   cursor: pointer;
 }
@@ -179,12 +177,14 @@ main {
 #left-ships {
   grid-column: 1;
   grid-row: 1;
+  justify-self: end;
 }
 
 #right-grid,
 #right-ships {
   grid-column: 3;
   grid-row: 1;
+  justify-self: start;
 }
 
 .cell {
