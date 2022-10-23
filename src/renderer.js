@@ -20,6 +20,7 @@ let buttonCallbacks = {
   newGameCB() {
     Renderer.toggleTypes("off");
     Renderer.toggleRotateButton("on");
+    p1PlacedShips = false;
     let isP1CPU = false;
     let isP2CPU = false;
     for (let radio of Page.p1Type) {
@@ -44,8 +45,8 @@ let buttonCallbacks = {
       if (State.players[1].ships.length) {
         throw new Error("You still have ships left to place!");
       }
-      Controller.startGame();
       p1PlacedShips = false;
+      Controller.startGame();
     }
   },
 
@@ -248,6 +249,7 @@ export const Renderer = {
               y: yCoord,
               direction: selectedDirection,
             });
+            State.players[playerIndex].selectedShip = null;
             if (grid == "left") this.populateShips("right");
             else this.populateShips("left");
             for (let selectedShip of document.querySelectorAll("selected")) {

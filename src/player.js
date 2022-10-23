@@ -9,6 +9,8 @@ export class Player {
     this.name = name;
     this.cpu = cpu;
     this.idealMoves = [];
+    this.lastHits = [];
+    this.currentDirection = null;
     this.ships = [
       new Ship(5),
       new Ship(4),
@@ -104,51 +106,132 @@ export class Player {
     return Math.floor(Math.random() * 10);
   }
 
+  deleteBadMoves(movesObj) {
+    for (let i = movesObj.length - 1; i >= 0; i--) {
+      if (
+        !this.board.squareExists(movesObj[i].x, movesObj[i].y) ||
+        !this.enemyBoard.squareNotHit(movesObj[i].x, movesObj[i].y)
+      ) {
+        movesObj.splice(i, 1);
+      }
+    }
+  }
+
   async CPUshoot() {
     let shot = false;
     let shotData = null;
     setTimeout(() => {
       while (!shot) {
         if (State.gameOver || !State.playing || State.placingShips) return;
-        try {
-          if (this.idealMoves.length) {
-            try {
-              shotData = this.shoot(
-                this.idealMoves[0][0],
-                this.idealMoves[0][1]
-              );
-              this.idealMoves.shift();
-            } catch (err) {
-              if (err.cause == "invalid" || err.cause == "repeat") {
-                this.idealMoves.shift();
+        if (this.idealMoves.length) {
+          shotData = this.shoot(this.idealMoves[0].x, this.idealMoves[0].y);
+          if (shotData.result == "hit") {
+            let direction = this.idealMoves[0].direction;
+            if (direction == "horizontal") {
+              for (let i = this.idealMoves.length - 1; i >= 0; i--) {
+                if (this.idealMoves[i].direction == "vertical") {
+                  this.idealMoves.splice(i, 1);
+                }
               }
-              continue;
+            } else if (direction == "vertical") {
+              for (let i = this.idealMoves.length - 1; i >= 0; i--) {
+                if (this.idealMoves[i].direction == "horizontal") {
+                  this.idealMoves.splice(i, 1);
+                }
+              }
             }
-          } else {
+          }
+          this.idealMoves.splice(this.idealMoves[0], 1);
+        } else {
+          try {
             shotData = this.shoot(
               this.randomCoordinate(),
               this.randomCoordinate()
             );
+          } catch (err) {
+            continue;
           }
+        }
 
-          shot = true;
-          if (shotData.result == "hit") {
-            this.idealMoves.push(
-              [shotData.x + 1, shotData.y],
-              [shotData.x - 1, shotData.y],
-              [shotData.x, shotData.y + 1],
-              [shotData.x, shotData.y - 1]
-            );
-            for (let move of this.idealMoves) {
+        shot = true;
+        if (!shotData.result) return;
+        if (shotData.result == "hit") {
+          if (this.lastHits.length) {
+            if (this.lastHits.length > 4) {
+              this.lastHits.splice(3);
+            }
+            for (let i = 0; i < this.lastHits.length - 1; i++) {
               if (
-                !this.board.squareExists(move[0], move[1]) ||
-                !this.enemyBoard.squareNotHit(move[0], move[1])
+                shotData.x < this.lastHits[i].x + 1 ||
+                shotData.x > this.lastHits[i].x - 1
               ) {
-                this.idealMoves.splice(this.idealMoves.indexOf(move), 1);
+                this.currentDirection = "horizontal";
+              } else if (
+                shotData.y < this.lastHits[i].y + 1 ||
+                shotData.y > this.lastHits[1] - 1
+              ) {
+                this.currentDirection = "vertical";
               }
             }
           }
-        } catch (err) {}
+          let nextMoves = null;
+          if (this.currentDirection == "horizontal") {
+            nextMoves = [
+              {
+                x: shotData.x - 1,
+                y: shotData.y,
+                direction: "horizontal",
+              },
+              {
+                x: shotData.x + 1,
+                y: shotData.y,
+                direction: "horizontal",
+              },
+            ];
+          } else if (this.currentDirection == "vertical") {
+            nextMoves = [
+              {
+                x: shotData.x,
+                y: shotData.y + 1,
+                direction: "vertical",
+              },
+              {
+                x: shotData.x,
+                y: shotData.y - 1,
+                direction: "vertical",
+              },
+            ];
+          } else {
+            nextMoves = [
+              {
+                x: shotData.x - 1,
+                y: shotData.y,
+                direction: "horizontal",
+              },
+              {
+                x: shotData.x + 1,
+                y: shotData.y,
+                direction: "horizontal",
+              },
+              {
+                x: shotData.x,
+                y: shotData.y + 1,
+                direction: "vertical",
+              },
+              {
+                x: shotData.x,
+                y: shotData.y - 1,
+                direction: "vertical",
+              },
+            ];
+          }
+
+          this.deleteBadMoves(nextMoves);
+          this.idealMoves.push(...nextMoves);
+          this.lastHits.unshift({ x: shotData.x, y: shotData.y });
+        } else if (shotData.result == "miss") {
+          this.currentDirection = null;
+        }
       }
     }, 2000);
   }

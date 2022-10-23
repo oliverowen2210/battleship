@@ -71,9 +71,9 @@ export const Controller = {
   },
 
   endGame() {
-    this.refreshView();
     State.gameOver = true;
     State.winningPlayer = State.players[State.turn];
+    this.refreshView();
     console.log(`The game is over. ${State.winningPlayer.name} wins!`);
   },
 
