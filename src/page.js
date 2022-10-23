@@ -1,0 +1,16 @@
+export const Page = {
+  playerOneType: document.getElementById("p1-type"),
+  leftGrid: document.getElementById("left-grid"),
+  leftShips: document.getElementById("left-ships"),
+  playerTwoType: document.getElementById("p2-type"),
+  rightShips: document.getElementById("right-ships"),
+  rightGrid: document.getElementById("right-grid"),
+  gameText: document.getElementById("game-text"),
+  gameButton: document.getElementById("game-button"),
+  p1Type: document.getElementsByName("p1-type"),
+  p2Type: document.getElementsByName("p2-type"),
+  rotateButton: document.getElementById("rotate-button"),
+  screenBlock: document.querySelector(".screen-block"),
+  exitScreenBlockButton: document.querySelector(".screen-block-button"),
+  screenBlockText: document.querySelector(".screen-block-text"),
+};

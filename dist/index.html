@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="main.js" defer></script>
+  </head>
+  <body>
+    <div class="screen-block hidden">
+      <div class="screen-block-text"></div>
+      <button class="screen-block-button">Continue</button>
+    </div>
+    <header>
+      <div id="p1-type">
+        <h2> Player 1 is a...</h2>
+        <div class="input-group" id="">
+          <div class="type-input">
+            <label for="p1-human">Human</label>
+            <input type="radio" name="p1-type" id="p1-human" value="human" checked></option>
+          </div>
+          <div class="type-input">
+            <label for="p2-human">CPU</label>
+            <input type="radio" name="p1-type" id="p1-human" value="CPU"></option>
+          </div>
+        </div>
+      </div>
+
+      </div>
+      <div id="title">
+        <h1>Battleship</h1>
+        <button id="game-button"></button>
+        <h2 id="game-text"></h2>
+      </div>
+      <div id="p2-type">
+        <h2>Player 2 is a...</h2>
+        <div class="input-group">
+          <div class="type-input">
+            <label for="p2-human">Human</label>
+            <input type="radio" name="p2-type" id="p2-human" value="human"></option>
+          </div>
+          <div class="type-input">
+            <label for="p2-human">CPU</label>
+            <input type="radio" name="p2-type" id="p2-human" value="CPU" checked></option>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main>
+      <div id="left-ships" class="ships hidden"></div>
+      <div id="left-grid" class="grid"></div>
+      <button id="rotate-button" type="button" class="hidden"></button>
+      <div id="right-grid" class="grid"></div>
+      <div id="right-ships" class="ships hidden"></div>
+    </main>
+  </body>
+</html>
