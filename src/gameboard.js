@@ -1,11 +1,10 @@
-import { Ship } from "./ship";
+import { Controller } from "./controller";
 
 export class Gameboard {
   constructor() {
-    this.board = this.createBoard();
+    this.shipMap = this.createBoard();
+    this.hitMap = this.createBoard();
     this.ships = [];
-    this.misses = [];
-    this.hits = [];
   }
 
   createBoard() {
@@ -20,53 +19,74 @@ export class Gameboard {
     return board;
   }
 
-  checkAlreadyShot(x, y) {
-    return (
-      this.misses.some((miss) => {
-        return miss[0] == x && miss[1] == y;
-      }) ||
-      this.hits.some((hit) => {
-        return hit[0] == x && hit[1] == y;
-      })
-    );
+  squareExists(x, y) {
+    if (
+      x < this.shipMap.length &&
+      x >= 0 &&
+      y < this.shipMap[0].length &&
+      y >= 0
+    )
+      return true;
+    return false;
   }
 
-  placeShip({ length, x, y, direction = "horizontal" }) {
-    for (let i = 0; i < length; i++) {
-      if (direction == "horizontal") {
-        if (this.board[x + i][y] !== null) {
-          throw new Error("Invalid placement!");
-        }
-      } else if (direction == "vertical") {
-        if (this.board[x][y + i] !== null) {
-          throw new Error("Invalid placement!");
-        }
-      }
+  squareNotHit(x, y) {
+    if (this.hitMap[x][y] !== null) {
+      return false;
     }
+    return true;
+  }
 
-    let newShip = new Ship(length);
+  squareHasShip(x, y) {
+    if (this.shipMap[x][y] !== null) {
+      return true;
+    }
+    return false;
+  }
+
+  validPlacement({ x, y, length, direction }) {
     for (let i = 0; i < length; i++) {
       if (direction == "horizontal") {
-        this.board[x + i][y] = newShip;
+        if (!this.squareExists(x + i, y) || this.squareHasShip(x + i, y))
+          return false;
       } else if (direction == "vertical") {
-        this.board[x][y + i] = newShip;
+        if (!this.squareExists(x, y - i) || this.squareHasShip(x, y - i))
+          return false;
       }
     }
-    this.ships.push(newShip);
-    return newShip;
+    return true;
+  }
+
+  placeShip({ ship, x, y, direction = "horizontal" }) {
+    if (!this.validPlacement({ x, y, direction, length: ship.length })) {
+      throw new Error("Invalid placement!");
+    }
+    for (let i = 0; i < ship.length; i++) {
+      if (direction == "horizontal") {
+        this.shipMap[x + i][y] = ship;
+      } else if (direction == "vertical") {
+        this.shipMap[x][y - i] = ship;
+      }
+    }
+    this.ships.push(ship);
+    Controller.refreshView();
   }
 
   receiveHit(x, y) {
-    if (this.checkAlreadyShot(x, y)) {
+    if (!this.squareExists(x, y)) {
+      return "invalid";
+    }
+
+    if (!this.squareNotHit(x, y)) {
       return "repeat";
     }
 
-    if (this.board[x][y]) {
-      this.board[x][y].hit();
-      this.hits.push([x, y]);
+    if (this.shipMap[x][y]) {
+      this.shipMap[x][y].hit();
+      this.hitMap[x][y] = "hit";
       return "hit";
     } else {
-      this.misses.push([x, y]);
+      this.hitMap[x][y] = "miss";
       return "miss";
     }
   }
