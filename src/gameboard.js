@@ -72,6 +72,18 @@ export class Gameboard {
     Controller.refreshView();
   }
 
+  removeShip(ship) {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        if (this.shipMap[i][j] == ship) {
+          this.shipMap[i][j] = null;
+        }
+      }
+    }
+    this.ships.splice(this.ships.indexOf(ship), 1);
+    Controller.refreshView();
+  }
+
   receiveHit(x, y) {
     if (!this.squareExists(x, y)) {
       return "invalid";

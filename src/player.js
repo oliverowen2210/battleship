@@ -12,19 +12,12 @@ export class Player {
     this.lastHits = [];
     this.currentDirection = null;
     this.ships = [
-      new Ship(5),
-      new Ship(4),
-      new Ship(3),
-      new Ship(3),
-      new Ship(2),
+      new Ship(5, "carrier"),
+      new Ship(4, "battleship"),
+      new Ship(3, "cruiser"),
+      new Ship(3, "submarine"),
+      new Ship(2, "destroyer"),
     ];
-    this.shipAliases = {
-      carrier: this.ships[0],
-      battleship: this.ships[1],
-      cruiser: this.ships[2],
-      submarine: this.ships[3],
-      destroyer: this.ships[4],
-    };
     this.selectedShip = null;
   }
 
@@ -160,15 +153,15 @@ export class Player {
             if (this.lastHits.length > 4) {
               this.lastHits.splice(3);
             }
-            for (let i = 0; i < this.lastHits.length - 1; i++) {
+            for (let i = 0; i < this.lastHits.length; i++) {
               if (
-                shotData.x < this.lastHits[i].x + 1 ||
-                shotData.x > this.lastHits[i].x - 1
+                shotData.x == this.lastHits[i].x + 1 ||
+                shotData.x == this.lastHits[i].x - 1
               ) {
                 this.currentDirection = "horizontal";
               } else if (
-                shotData.y < this.lastHits[i].y + 1 ||
-                shotData.y > this.lastHits[1] - 1
+                shotData.y == this.lastHits[i].y + 1 ||
+                shotData.y == this.lastHits[i].y - 1
               ) {
                 this.currentDirection = "vertical";
               }
