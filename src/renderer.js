@@ -63,7 +63,7 @@ export const Renderer = {
     } else if (State.gameOver) {
       Page.gameText.textContent = `${State.winningPlayer.name} wins!!!!!!!`;
     } else if (State.placingShips) {
-      Page.gameText.textContent = "Press R to rotate";
+      Page.gameText.textContent = "Place your ships";
     } else {
       Page.gameText.textContent = `${State.players[State.turn].name}'s turn`;
     }
