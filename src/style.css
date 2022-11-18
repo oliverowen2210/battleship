@@ -6,7 +6,7 @@ html {
 }
 
 body {
-  background: url("water.jpg");
+  background: url("./images/water.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -165,7 +165,7 @@ main {
 #rotate-button {
   width: 75%;
   height: 25%;
-  background: url("rotate.png");
+  background: url("./images/rotate.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -203,14 +203,14 @@ main {
 }
 
 .cell.miss {
-  background-image: url("miss.png");
+  background-image: url("./images/miss.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
 }
 
 .cell.hit {
-  background-image: url("hit.png");
+  background-image: url("./images/hit.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -223,7 +223,7 @@ main {
 }
 
 .cell.ship.hit {
-  background-image: url(file:///C:/odin/js/odin-battleship/src/miss.png);
+  background-image: url("./images/miss.png");
 }
 
 .cell.hover {
