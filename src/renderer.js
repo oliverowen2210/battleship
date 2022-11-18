@@ -63,7 +63,7 @@ export const Renderer = {
     } else if (State.gameOver) {
       Page.gameText.textContent = `${State.winningPlayer.name} wins!!!!!!!`;
     } else if (State.placingShips) {
-      Page.gameText.textContent = "Press R to rotate";
+      Page.gameText.textContent = "Place your ships";
     } else {
       Page.gameText.textContent = `${State.players[State.turn].name}'s turn`;
     }
@@ -154,9 +154,7 @@ export const Renderer = {
       shipHTML.classList.add("ship-wrapper");
       const shipName = document.createElement("h2");
       shipName.classList.add("ship-name");
-      shipName.textContent = Object.keys(State.players[player].shipAliases)[
-        Object.values(State.players[player].shipAliases).indexOf(ship)
-      ];
+      shipName.textContent = ship.name;
       const shipCells = document.createElement("div");
       shipCells.classList.add("ship-cells-wrapper");
       shipHTML.appendChild(shipName);
@@ -202,6 +200,12 @@ export const Renderer = {
     }
   },
 
+  removeClickedShip(shipMap, board, x, y) {
+    State.players[board].selectedShip = shipMap[x][y];
+    State.players[board].board.removeShip(State.players[board].selectedShip);
+    State.players[board].ships.push(State.players[board].selectedShip);
+  },
+
   populateGrid({ grid = left, hitMap = null, shipMap = null }) {
     if (grid != "left" && grid != "right")
       throw new Error("Invalid grid! Must be 'left' or 'right'.");
@@ -243,18 +247,29 @@ export const Renderer = {
 
         cell.addEventListener("click", () => {
           if (State.placingShips) {
-            if (!State.players[playerIndex].selectedShip) return;
-            State.players[playerIndex].placeSelectedShip({
-              x: xCoord,
-              y: yCoord,
-              direction: selectedDirection,
-            });
-            State.players[playerIndex].selectedShip = null;
+            if (!State.players[playerIndex].selectedShip) {
+              if (cell.classList.contains("ship")) {
+                this.removeClickedShip(shipMap, playerIndex, xCoord, yCoord);
+              } else return;
+            } else {
+              if (cell.classList.contains("ship")) {
+                this.removeClickedShip(shipMap, playerIndex, xCoord, yCoord);
+              } else {
+                State.players[playerIndex].placeSelectedShip({
+                  x: xCoord,
+                  y: yCoord,
+                  direction: selectedDirection,
+                });
+                State.players[playerIndex].selectedShip = null;
+              }
+
+              for (let selectedShip of document.querySelectorAll("selected")) {
+                selectedShip.classList.remove("selected");
+              }
+            }
+
             if (grid == "left") this.populateShips("right");
             else this.populateShips("left");
-            for (let selectedShip of document.querySelectorAll("selected")) {
-              selectedShip.classList.remove("selected");
-            }
           } else if (Controller.canClick(otherPlayerIndex, xCoord, yCoord)) {
             State.players[otherPlayerIndex].shoot(xCoord, yCoord);
           }
